@@ -39,3 +39,30 @@ model Paddle {
 
   @@map("paddles")
 }
+
+model QuizQuestion {
+  id              String   @id @default(uuid())
+  questionKey     String   @unique
+  questionText    String
+  questionType    String
+  options         String
+  displayOrder    Int
+  conditions      String?
+  weightMappings  String
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("quiz_questions")
+}
+
+model QuizResponse {
+  id          String   @id @default(uuid())
+  sessionId   String
+  userId      String?
+  responses   String
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  @@map("quiz_responses")
+}
