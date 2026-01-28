@@ -1,5 +1,8 @@
 import { prisma } from '@/lib/prisma';
 
+// Force dynamic rendering to prevent build-time prerendering
+export const dynamic = 'force-dynamic';
+
 interface Paddle {
   id: string;
   name: string;
