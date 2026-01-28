@@ -14,7 +14,7 @@ An intelligent pickleball paddle recommendation engine that helps players find t
 ## 🚀 Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
-- **Database**: Prisma 5 + SQLite
+- **Database**: Prisma 5 + Supabase (PostgreSQL)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **State Management**: React Hooks + localStorage
@@ -32,11 +32,16 @@ cd letspickapaddle
 npm install
 ```
 
-3. Set up the database:
+3. Set up Supabase:
+   - Follow the comprehensive guide in [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
+   - Quick version:
+     1. Create a Supabase project at https://supabase.com
+     2. Copy `.env.example` to `.env` and add your database URLs
+     3. Run:
 ```bash
-npx prisma migrate dev
-npx tsx prisma/seed.ts
-npx tsx prisma/seedQuiz.ts
+npx prisma generate
+npx prisma db push
+npm run db:seed
 ```
 
 4. Start the development server:
@@ -50,45 +55,29 @@ npm run dev
 
 **Production URL**: https://letspickapaddle.vercel.app
 
-> **Note**: The current deployment uses SQLite, which has limitations in serverless environments. The database resets between requests. For production use, switch to PostgreSQL using Vercel Postgres, Neon, or Supabase. See the [Production Database Setup](#-production-database-setup) section below.
+The application is deployed on Vercel with Supabase PostgreSQL for persistent data storage.
 
-## 💾 Production Database Setup
+## 💾 Database Architecture
 
-For production deployment, replace SQLite with PostgreSQL:
+The application uses **Supabase** for:
+- **PostgreSQL Database**: Reliable, persistent storage for paddles, quiz questions, and user responses
+- **Connection Pooling**: Optimized for Vercel's serverless functions
+- **Future-Ready**: Built-in Auth, Storage, Edge Functions, and Realtime capabilities for upcoming features
 
-1. **Set up a PostgreSQL database** (choose one):
-   - [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
-   - [Neon](https://neon.tech) (free tier available)
-   - [Supabase](https://supabase.com) (free tier available)
+### Deployment Configuration
 
-2. **Update your schema**:
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-```
+Environment variables required in Vercel:
+- `DATABASE_URL`: Connection pooler URL (port 6543) for serverless functions
+- `DIRECT_URL`: Direct connection URL (port 5432) for migrations
 
-3. **Add DATABASE_URL to Vercel**:
-```bash
-vercel env add DATABASE_URL
-# Paste your PostgreSQL connection string
-```
-
-4. **Deploy**:
-```bash
-git add -A
-git commit -m "Switch to PostgreSQL"
-git push
-vercel --prod
-```
+See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for complete setup instructions.
 
 ## 🗂️ Project Structure
 
 ```
 letspickapaddle/
 ├── prisma/
-│   ├── schema.prisma          # Database schema
+│   ├── schema.prisma          # Database schema (PostgreSQL)
 │   ├── seed.ts                # Paddle data seeding
 │   └── seedQuiz.ts            # Quiz questions seeding
 ├── src/
