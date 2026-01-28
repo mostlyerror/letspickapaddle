@@ -46,6 +46,43 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000)
 
+## 🌐 Live Demo
+
+**Production URL**: https://letspickapaddle.vercel.app
+
+> **Note**: The current deployment uses SQLite, which has limitations in serverless environments. The database resets between requests. For production use, switch to PostgreSQL using Vercel Postgres, Neon, or Supabase. See the [Production Database Setup](#-production-database-setup) section below.
+
+## 💾 Production Database Setup
+
+For production deployment, replace SQLite with PostgreSQL:
+
+1. **Set up a PostgreSQL database** (choose one):
+   - [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)
+   - [Neon](https://neon.tech) (free tier available)
+   - [Supabase](https://supabase.com) (free tier available)
+
+2. **Update your schema**:
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+3. **Add DATABASE_URL to Vercel**:
+```bash
+vercel env add DATABASE_URL
+# Paste your PostgreSQL connection string
+```
+
+4. **Deploy**:
+```bash
+git add -A
+git commit -m "Switch to PostgreSQL"
+git push
+vercel --prod
+```
+
 ## 🗂️ Project Structure
 
 ```
