@@ -1,11 +1,11 @@
 -- CreateTable
 CREATE TABLE "paddles" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "brand" TEXT NOT NULL,
     "priceCents" INTEGER NOT NULL,
-    "weightOz" DOUBLE PRECISION,
-    "gripCircumference" DOUBLE PRECISION,
+    "weightOz" REAL,
+    "gripCircumference" REAL,
     "coreMaterial" TEXT,
     "faceMaterial" TEXT,
     "shape" TEXT,
@@ -16,12 +16,10 @@ CREATE TABLE "paddles" (
     "sweetSpotSize" TEXT,
     "swingWeight" INTEGER,
     "twistWeight" INTEGER,
-    "handleLengthIn" DOUBLE PRECISION,
+    "handleLengthIn" REAL,
     "usapaApproved" BOOLEAN NOT NULL DEFAULT true,
     "imageUrl" TEXT,
-    "affiliateUrls" JSONB,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "paddles_pkey" PRIMARY KEY ("id")
+    "affiliateUrls" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
 );
