@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Let's Pick a Paddle 🏓
 
-## Getting Started
+An intelligent pickleball paddle recommendation engine that helps players find their perfect paddle match through a personalized quiz system.
 
-First, run the development server:
+## 🎯 Features
 
+- **Personalized Quiz**: 8-question adaptive quiz covering skill level, play style, budget, and physical considerations
+- **Smart Recommendations**: Weighted scoring algorithm analyzes 20+ paddles across multiple attributes
+- **Match Explanations**: Get clear reasons why each paddle suits your preferences
+- **Progress Tracking**: Quiz progress saved locally - resume anytime
+- **Paddle Browser**: Browse all available paddles with detailed specifications
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Database**: Prisma 5 + SQLite
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **State Management**: React Hooks + localStorage
+
+## 📦 Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/mostlyerror/letspickapaddle.git
+cd letspickapaddle
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up the database:
+```bash
+npx prisma migrate dev
+npx tsx prisma/seed.ts
+npx tsx prisma/seedQuiz.ts
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Start the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+## 🗂️ Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+letspickapaddle/
+├── prisma/
+│   ├── schema.prisma          # Database schema
+│   ├── seed.ts                # Paddle data seeding
+│   └── seedQuiz.ts            # Quiz questions seeding
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── paddles/       # Paddle listing API
+│   │   │   ├── quiz/          # Quiz questions & responses
+│   │   │   └── recommend/     # Recommendation engine API
+│   │   ├── quiz/              # Quiz UI
+│   │   ├── results/           # Results page
+│   │   ├── paddles/           # Paddle browser
+│   │   └── page.tsx           # Homepage
+│   └── lib/
+│       ├── prisma.ts          # Prisma client
+│       └── recommendationEngine.ts  # Scoring algorithm
+└── docs/
+    └── IMPLEMENT.md           # Implementation plan
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎮 How It Works
 
-## Deploy on Vercel
+### 1. Quiz System
+Users answer 8 questions about:
+- Skill level (beginner to pro)
+- Play style (power, control, all-around, defensive)
+- Shot preferences (dinks, drives, serves, volleys, spins)
+- Budget range
+- Physical considerations
+- Grip size preference
+- Weight preference
+- Paddle shape preference
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Recommendation Algorithm
+The engine uses weighted scoring across multiple dimensions:
+- **Power Rating**: Matches user's power preference
+- **Control Rating**: Evaluates precision and placement
+- **Spin Rating**: Considers spin shot frequency
+- **Weight**: Matches preferred paddle weight
+- **Price**: Filters within budget range
+- **Materials**: Considers core and face materials
+- **Shape**: Matches shape preferences (standard, elongated, wide-body)
+- **Grip Size**: Ensures comfortable fit
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3. Results Display
+- Top 5 paddle recommendations
+- Match percentage (0-100%)
+- Top 3 reasons for each match
+- Detailed specifications
+- Price comparison
+
+## 📊 Database Models
+
+### Paddle
+Stores paddle specifications including ratings, materials, dimensions, and pricing.
+
+### QuizQuestion
+Config-driven questions with:
+- Question text and type (single/multi-select)
+- Options with descriptions
+- Weight mappings for scoring
+- Display order and conditions
+
+### QuizResponse
+Stores user responses linked to session IDs for result retrieval.
+
+## 🔧 API Endpoints
+
+- `GET /api/paddles` - List all paddles with optional filtering
+- `GET /api/quiz/questions` - Fetch active quiz questions
+- `POST /api/quiz/responses` - Save quiz responses
+- `GET /api/quiz/responses?sessionId=X` - Retrieve saved responses
+- `POST /api/recommend` - Generate paddle recommendations
+
+## 🎨 Design Philosophy
+
+- **User-First**: Simple, intuitive interface with minimal friction
+- **Mobile-Responsive**: Optimized for all screen sizes
+- **Fast & Lightweight**: Server-side rendering for speed
+- **Accessible**: Clear hierarchy and readable typography
+- **Progressive**: Works without JavaScript for core features
+
+## 📝 Future Enhancements
+
+- [ ] User accounts for saving multiple quiz results
+- [ ] Side-by-side paddle comparison tool
+- [ ] Advanced mode with granular sliders
+- [ ] Affiliate link integration
+- [ ] User ratings and reviews
+- [ ] Share results via unique URLs
+- [ ] Price alerts and tracking
+- [ ] Demo locator (find retailers nearby)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+MIT License - feel free to use this project for learning or commercial purposes.
+
+## 🙏 Acknowledgments
+
+Built with guidance from the implementation plan in `docs/IMPLEMENT.md`.
+
+---
+
+**Repository**: https://github.com/mostlyerror/letspickapaddle
+
+**Questions?** Open an issue on GitHub.
