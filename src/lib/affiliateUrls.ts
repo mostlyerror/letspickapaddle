@@ -57,7 +57,10 @@ function substituteAffiliateId(
     }
 
     // Impact.com networks (Pickleball Central, Dick's Sporting Goods, etc.)
-    if (retailer.includes('impact') && partnerIds.impactAffiliateId) {
+    const isImpactNetwork = retailer.includes('impact') ||
+                           retailer.includes('pickleball') ||
+                           retailer.includes('dicks');
+    if (isImpactNetwork && partnerIds.impactAffiliateId) {
       // Impact uses various parameters - add as subid for tracking
       url.searchParams.set('subid', partnerIds.impactAffiliateId);
       return url.toString();
@@ -90,9 +93,9 @@ function substituteAffiliateId(
  * Validates an Amazon Associates affiliate ID format
  */
 export function validateAmazonAffiliateId(id: string): boolean {
-  // Amazon Associate IDs typically end with -20 or -21
+  // Amazon Associate IDs must end with -20 or -21
   // Format: yoursite-20 or yoursite-21
-  return /^[a-zA-Z0-9-]+-2[0-9]$/.test(id);
+  return /^[a-zA-Z0-9-]+-2[01]$/.test(id);
 }
 
 /**
