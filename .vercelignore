@@ -1,0 +1,2 @@
+# Don't ignore the database file for Vercel deployment
+!prisma/dev.db
