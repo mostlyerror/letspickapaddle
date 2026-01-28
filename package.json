@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "prisma generate && next build",
     "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts && tsx prisma/seedQuiz.ts && tsx prisma/seedPartners.ts",
     "db:push": "prisma db push",
     "start": "next start",
