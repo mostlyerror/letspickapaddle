@@ -10,8 +10,36 @@ export default function PartnerSignup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [apiKey, setApiKey] = useState('');
+  const [partnerId, setPartnerId] = useState('');
   const [embedCode, setEmbedCode] = useState('');
+
+  // Copy to clipboard with fallback for older browsers
+  async function copyToClipboard(text: string, label: string) {
+    try {
+      // Modern clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        alert(`${label} copied!`);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          alert(`${label} copied!`);
+        } catch (err) {
+          alert(`Failed to copy. Please copy manually: ${text}`);
+        }
+        document.body.removeChild(textArea);
+      }
+    } catch (err) {
+      alert(`Failed to copy. Please copy manually.`);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -40,7 +68,7 @@ export default function PartnerSignup() {
       }
 
       setSuccess(true);
-      setApiKey(result.apiKey);
+      setPartnerId(result.partnerId);
       setEmbedCode(result.embedCode);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign up');
@@ -77,26 +105,23 @@ export default function PartnerSignup() {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Your API Key
+                  Your Partner ID
                 </label>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    value={apiKey}
+                    value={partnerId}
                     readOnly
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm"
                   />
                   <Button
-                    onClick={() => {
-                      navigator.clipboard.writeText(apiKey);
-                      alert('API Key copied!');
-                    }}
+                    onClick={() => copyToClipboard(partnerId, 'Partner ID')}
                   >
                     Copy
                   </Button>
                 </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  Keep this key safe. You'll need it to access analytics.
+                  This ID is used in your widget embed code below.
                 </p>
               </div>
 
@@ -109,10 +134,7 @@ export default function PartnerSignup() {
                     {embedCode}
                   </pre>
                   <Button
-                    onClick={() => {
-                      navigator.clipboard.writeText(embedCode);
-                      alert('Embed code copied!');
-                    }}
+                    onClick={() => copyToClipboard(embedCode, 'Embed code')}
                     size="sm"
                     className="absolute top-2 right-2"
                   >
@@ -138,7 +160,7 @@ export default function PartnerSignup() {
                 <Button onClick={() => router.push('/')} variant="outline">
                   Back to Home
                 </Button>
-                <Button onClick={() => window.open('/widget/quiz?partner=' + apiKey, '_blank')}>
+                <Button onClick={() => window.open('/widget/quiz?partner=' + partnerId, '_blank')}>
                   Test Widget
                 </Button>
               </div>
