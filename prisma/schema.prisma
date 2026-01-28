@@ -58,12 +58,159 @@ model QuizQuestion {
 }
 
 model QuizResponse {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   sessionId   String
   userId      String?
+  partnerId   String?
   responses   String
   completedAt DateTime?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+
+  partner     Partner?  @relation(fields: [partnerId], references: [id])
 
   @@map("quiz_responses")
+}
+
+model Partner {
+  id              String    @id @default(uuid())
+  apiKey          String    @unique @default(uuid())
+  name            String
+  email           String    @unique
+  website         String?
+
+  // Partner type and subscription (SaaS model)
+  partnerType            String    // 'blog', 'influencer', 'retailer', 'coach'
+  subscriptionTier       String    @default("free") // 'free', 'starter', 'pro', 'enterprise'
+  billingStatus          String    @default("trial") // 'active', 'past_due', 'canceled', 'trial'
+  subscriptionStartDate  DateTime?
+  nextBillingDate        DateTime?
+  monthlyQuizCount       Int       @default(0) // Reset monthly for tier limit enforcement
+
+  // Stripe integration (for future payment processing)
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+
+  // Branding customization (free: limited, pro: full)
+  logoUrl         String?
+  primaryColor    String?   @default("#2563eb")
+  secondaryColor  String?   @default("#ffffff")
+
+  // Widget configuration
+  embedType       String    @default("inline") // 'inline', 'modal', 'floating'
+  customDomain    String?   // Pro/Enterprise only
+  allowedDomains  String?   // JSON array of allowed domains
+
+  // Paddle curation (Pro/Enterprise only)
+  curatedPaddles  String?   // JSON array of paddle IDs
+
+  // Affiliate IDs (partners provide their own affiliate accounts)
+  amazonAffiliateId  String?   // Amazon Associates ID (e.g., "yoursite-20")
+  impactAffiliateId  String?   // Impact.com affiliate ID
+  otherAffiliateIds  String?   // JSON object for other networks
+
+  // Status
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  quizResponses   QuizResponse[]
+  analytics       PartnerAnalytics[]
+  socialShares    SocialShare[]
+  attributedSales AttributedSale[]
+
+  @@map("partners")
+}
+
+model PartnerAnalytics {
+  id              String    @id @default(uuid())
+  partnerId       String
+  date            DateTime  @db.Date
+
+  // Engagement metrics
+  quizStarts      Int       @default(0)
+  quizCompletions Int       @default(0)
+  dropoffs        Int       @default(0)
+  avgTimeSeconds  Int?
+
+  // Conversion metrics
+  resultsViewed   Int       @default(0)
+  paddleClicks    Int       @default(0)
+  purchaseClicks  Int       @default(0)
+
+  // Social metrics
+  shareAttempts   Int       @default(0)
+  shareCompletes  Int       @default(0)
+  viralVisits     Int       @default(0)
+
+  // Revenue
+  attributedSales Int       @default(0)
+  revenueUsdCents Int       @default(0)
+
+  partner         Partner   @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+
+  @@unique([partnerId, date])
+  @@map("partner_analytics")
+}
+
+model SocialShare {
+  id            String    @id @default(uuid())
+  sessionId     String
+  partnerId     String?
+  userId        String?
+
+  // Share details
+  platform      String
+  shareUrl      String?
+  resultCardUrl String?
+
+  // Tracking
+  clickCount    Int       @default(0)
+  conversions   Int       @default(0)
+
+  partner       Partner?  @relation(fields: [partnerId], references: [id])
+  createdAt     DateTime  @default(now())
+
+  @@map("social_shares")
+}
+
+model AttributedSale {
+  id               String    @id @default(uuid())
+  partnerId        String
+  sessionId        String
+
+  // Sale details
+  paddleId         String?
+  retailer         String    // 'amazon', 'pickleball-central', etc.
+  saleAmountCents  Int
+  commissionCents  Int       // Total affiliate commission (partners keep 100%)
+
+  // Attribution (tracking only - partners keep 100% of commissions)
+  affiliateNetwork  String   // 'amazon-associates', 'impact', etc.
+  transactionId     String?  // From affiliate network
+
+  partner          Partner   @relation(fields: [partnerId], references: [id])
+  createdAt        DateTime  @default(now())
+
+  @@map("attributed_sales")
+}
+
+model EmbedEvent {
+  id         String    @id @default(uuid())
+  partnerId  String?
+  sessionId  String?
+
+  eventType  String
+  eventData  String?
+
+  // Request context
+  userAgent  String?
+  referer    String?
+  ipHash     String?
+
+  createdAt  DateTime  @default(now())
+
+  @@index([partnerId, createdAt])
+  @@index([sessionId])
+  @@map("embed_events")
 }

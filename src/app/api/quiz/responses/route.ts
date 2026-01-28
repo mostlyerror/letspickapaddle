@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { responses, sessionId } = body;
+    const { responses, sessionId, partnerId } = body;
 
     if (!responses || typeof responses !== 'object') {
       return NextResponse.json(
@@ -20,14 +20,38 @@ export async function POST(request: Request) {
     // Generate session ID if not provided
     const finalSessionId = sessionId || nanoid();
 
-    // Save quiz response
+    // Save quiz response with partner tracking
     const quizResponse = await prisma.quizResponse.create({
       data: {
         sessionId: finalSessionId,
+        partnerId: partnerId || null,
         responses: JSON.stringify(responses),
         completedAt: new Date(),
       },
     });
+
+    // Update partner analytics
+    if (partnerId) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      await prisma.partnerAnalytics.upsert({
+        where: {
+          partnerId_date: {
+            partnerId,
+            date: today,
+          },
+        },
+        update: {
+          quizCompletions: { increment: 1 },
+        },
+        create: {
+          partnerId,
+          date: today,
+          quizCompletions: 1,
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,

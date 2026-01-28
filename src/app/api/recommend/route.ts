@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { calculatePaddleScore } from '@/lib/recommendationEngine';
+import { buildPartnerAffiliateUrls } from '@/lib/affiliateUrls';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { sessionId, responses } = body;
+    const { sessionId, responses, partnerId } = body;
 
     if (!responses) {
       return NextResponse.json(
@@ -27,16 +28,64 @@ export async function POST(request: Request) {
       weightMappings[q.questionKey] = JSON.parse(q.weightMappings);
     });
 
-    // Fetch all paddles
-    const paddles = await prisma.paddle.findMany();
+    // Fetch partner to check for curated paddles and affiliate IDs
+    let curatedPaddleIds: string[] | null = null;
+    let partnerAffiliateIds: {
+      amazonAffiliateId?: string | null;
+      impactAffiliateId?: string | null;
+      otherAffiliateIds?: string | null;
+    } | null = null;
+
+    if (partnerId) {
+      const partner = await prisma.partner.findUnique({
+        where: { id: partnerId },
+        select: {
+          curatedPaddles: true,
+          amazonAffiliateId: true,
+          impactAffiliateId: true,
+          otherAffiliateIds: true,
+        },
+      });
+
+      if (partner?.curatedPaddles) {
+        curatedPaddleIds = JSON.parse(partner.curatedPaddles);
+      }
+
+      if (partner) {
+        partnerAffiliateIds = {
+          amazonAffiliateId: partner.amazonAffiliateId,
+          impactAffiliateId: partner.impactAffiliateId,
+          otherAffiliateIds: partner.otherAffiliateIds,
+        };
+      }
+    }
+
+    // Fetch paddles (filtered by curated list if applicable)
+    const paddles = await prisma.paddle.findMany({
+      where: curatedPaddleIds
+        ? { id: { in: curatedPaddleIds } }
+        : undefined,
+    });
 
     // Calculate scores for each paddle
     const scoredPaddles = paddles.map((paddle) => {
       const { score, matchReasons } = calculatePaddleScore(paddle, responses, weightMappings);
+
+      // Build affiliate URLs with partner's affiliate IDs
+      let affiliateUrls = paddle.affiliateUrls
+        ? JSON.parse(paddle.affiliateUrls)
+        : {};
+
+      if (partnerAffiliateIds && Object.keys(affiliateUrls).length > 0) {
+        // Substitute partner's affiliate IDs into the URLs
+        affiliateUrls = buildPartnerAffiliateUrls(affiliateUrls, partnerAffiliateIds);
+      }
+
       return {
-        ...paddle,
+        paddle,
         score,
-        matchReasons,
+        reasoning: matchReasons.join('. '),
+        affiliateUrls,
       };
     });
 

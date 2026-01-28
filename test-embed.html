@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaddleFit Widget Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f9fafb;
+    }
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin: 0 0 10px 0;
+      color: #1f2937;
+    }
+    .subtitle {
+      color: #6b7280;
+      margin: 0;
+    }
+    .content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .widget-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Test Blog - Best Pickleball Paddles for 2026</h1>
+    <p class="subtitle">Expert reviews and personalized recommendations</p>
+  </div>
+
+  <div class="content">
+    <h2>Finding Your Perfect Paddle</h2>
+    <p>
+      With so many pickleball paddles on the market, finding the right one can be overwhelming.
+      That's why we've partnered with PaddleFit to bring you a personalized recommendation tool.
+    </p>
+    <p>
+      Answer 8 quick questions about your play style, and get instant recommendations from 20+ top brands.
+      Whether you're a beginner or a pro, power player or control specialist, we'll help you find your perfect match.
+    </p>
+  </div>
+
+  <!-- PaddleFit Widget -->
+  <div class="widget-container">
+    <h2>Take the Quiz</h2>
+    <div id="paddlefit-widget"></div>
+    <script
+      src="http://localhost:3000/widget.js"
+      data-partner="147fabd6-cb26-45e7-bee9-c614559683f5"
+      data-target="paddlefit-widget"
+      data-base-url="http://localhost:3000"
+    ></script>
+    <!-- Note: Replace with your actual partner ID from signup -->
+  </div>
+
+  <div class="content">
+    <h2>Why Trust Our Recommendations?</h2>
+    <p>
+      Our quiz uses a sophisticated matching algorithm that considers your skill level,
+      play style, physical considerations, and budget to recommend paddles that truly fit your needs.
+    </p>
+  </div>
+</body>
+</html>

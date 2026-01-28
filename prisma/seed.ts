@@ -3,6 +3,19 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Safety check - don't seed if connected to production
+const DATABASE_URL = process.env.DATABASE_URL || '';
+
+if (DATABASE_URL.includes('-prod') ||
+    DATABASE_URL.includes('production') ||
+    process.env.VERCEL_ENV === 'production') {
+  console.error('❌ SAFETY CHECK: Cannot run seed in production!');
+  console.error('This script should only run in development.');
+  process.exit(1);
+}
+
+console.log('✅ Running in development environment');
+
 const paddles = [
   {
     name: 'Selkirk Vanguard Power Air Invikta',
