@@ -1,0 +1,73 @@
+{
+  "template": {
+    "name": "Full Paddle Name (Example: Selkirk Vanguard Power Air Invikta)",
+    "brand": "Brand Name (Example: Selkirk)",
+    "priceCents": 17995,
+    "weightOz": 8.0,
+    "gripCircumference": 4.25,
+    "coreMaterial": "polymer | nomex | aluminum",
+    "faceMaterial": "carbon fiber | graphite | fiberglass",
+    "shape": "standard | elongated | wide-body",
+    "balancePointMm": 260,
+    "powerRating": 9,
+    "controlRating": 7,
+    "spinRating": 8,
+    "sweetSpotSize": "small | medium | large",
+    "swingWeight": 115,
+    "twistWeight": 6.8,
+    "handleLengthIn": 5.5,
+    "usapaApproved": true,
+    "amazonUrl": "https://www.amazon.com/dp/ASIN_HERE"
+  },
+  "examples": [
+    {
+      "name": "Selkirk Vanguard Power Air Invikta",
+      "brand": "Selkirk",
+      "priceCents": 17995,
+      "weightOz": 8.0,
+      "gripCircumference": 4.25,
+      "coreMaterial": "polymer",
+      "faceMaterial": "carbon fiber",
+      "shape": "elongated",
+      "balancePointMm": 260,
+      "powerRating": 9,
+      "controlRating": 7,
+      "spinRating": 8,
+      "sweetSpotSize": "large",
+      "swingWeight": 115,
+      "twistWeight": 6.8,
+      "handleLengthIn": 5.5,
+      "usapaApproved": true,
+      "amazonUrl": "https://www.amazon.com/dp/B09L3QXKJT"
+    },
+    {
+      "name": "JOOLA Ben Johns Hyperion CFS 16",
+      "brand": "JOOLA",
+      "priceCents": 24995,
+      "weightOz": 8.3,
+      "gripCircumference": 4.25,
+      "coreMaterial": "polymer",
+      "faceMaterial": "carbon fiber",
+      "shape": "standard",
+      "balancePointMm": 255,
+      "powerRating": 8,
+      "controlRating": 9,
+      "spinRating": 9,
+      "sweetSpotSize": "large",
+      "swingWeight": 118,
+      "twistWeight": 7.2,
+      "handleLengthIn": 5.5,
+      "usapaApproved": true,
+      "amazonUrl": "https://www.amazon.com/dp/B0B8VXNR7L"
+    }
+  ],
+  "notes": [
+    "All prices should be in cents (multiply dollars by 100)",
+    "Amazon URLs should be in format: https://www.amazon.com/dp/ASIN",
+    "Find ASINs in Amazon product URLs after '/dp/'",
+    "Ratings are on a 1-10 scale",
+    "Most paddles are USAPA approved (set to true unless stated otherwise)",
+    "Optional fields can be omitted if data not available: balancePointMm, swingWeight, twistWeight",
+    "Required fields: name, brand, priceCents, amazonUrl"
+  ]
+}

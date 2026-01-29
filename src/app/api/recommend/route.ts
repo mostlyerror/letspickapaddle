@@ -82,9 +82,21 @@ export async function POST(request: Request) {
       }
 
       return {
-        paddle,
+        id: paddle.id,
+        name: paddle.name,
+        brand: paddle.brand,
+        priceCents: paddle.priceCents,
+        powerRating: paddle.powerRating,
+        controlRating: paddle.controlRating,
+        spinRating: paddle.spinRating,
+        weightOz: paddle.weightOz,
+        coreMaterial: paddle.coreMaterial,
+        faceMaterial: paddle.faceMaterial,
+        shape: paddle.shape,
+        sweetSpotSize: paddle.sweetSpotSize,
+        imageUrl: paddle.imageUrl,
         score,
-        reasoning: matchReasons.join('. '),
+        matchReasons,
         affiliateUrls,
       };
     });

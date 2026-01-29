@@ -12,8 +12,10 @@ interface Recommendation {
   controlRating: number | null;
   spinRating: number | null;
   weightOz: number | null;
+  imageUrl: string | null;
   score: number;
   matchReasons: string[];
+  affiliateUrls?: any;
 }
 
 function ResultsContent() {
@@ -103,27 +105,38 @@ function ResultsContent() {
               key={paddle.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="text-4xl font-bold text-blue-600">#{index + 1}</div>
-                      <div className="text-sm text-gray-600">Match</div>
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">{paddle.name}</h2>
-                      <p className="text-lg text-gray-600">{paddle.brand}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-bold text-green-600">
-                      ${(paddle.priceCents / 100).toFixed(2)}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">
-                      {paddle.score}% Match
-                    </div>
-                  </div>
+              <div className="md:flex">
+                {/* Paddle Image */}
+                <div className="md:w-64 md:flex-shrink-0 bg-gray-100 flex items-center justify-center p-6">
+                  <img
+                    src={paddle.imageUrl || '/paddle-placeholder.png'}
+                    alt={paddle.name}
+                    className="w-full h-auto max-w-[200px] object-contain"
+                  />
                 </div>
+
+                {/* Paddle Details */}
+                <div className="p-6 flex-1">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className="text-4xl font-bold text-blue-600">#{index + 1}</div>
+                        <div className="text-sm text-gray-600">Match</div>
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900">{paddle.name}</h2>
+                        <p className="text-lg text-gray-600">{paddle.brand}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-green-600">
+                        ${(paddle.priceCents / 100).toFixed(2)}
+                      </div>
+                      <div className="text-sm text-gray-600 mt-1">
+                        {paddle.score}% Match
+                      </div>
+                    </div>
+                  </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -178,6 +191,21 @@ function ResultsContent() {
                     </div>
                   </div>
                 </div>
+
+                {/* Buy Button */}
+                {paddle.affiliateUrls?.amazon && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <a
+                      href={paddle.affiliateUrls.amazon}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full bg-orange-500 text-white text-center font-semibold py-3 px-6 rounded-lg hover:bg-orange-600 transition-colors"
+                    >
+                      Buy on Amazon - ${(paddle.priceCents / 100).toFixed(2)}
+                    </a>
+                  </div>
+                )}
+              </div>
               </div>
             </div>
           ))}
