@@ -4,6 +4,7 @@ import { buildPartnerAffiliateUrls } from '@/lib/affiliateUrls';
 import { RecommendationEngine } from '@/platform/core/engine/recommendation-engine';
 import { paddlesToProducts, productToPaddleResponse } from '@/platform/adapters/paddle-adapter';
 import { paddleScoringConfig } from '@/platform/adapters/paddle-scoring-config';
+import { mapQuizResponsesToScoringFormat } from '@/platform/adapters/quiz-response-mapper';
 
 export async function POST(request: Request) {
   try {
@@ -62,9 +63,12 @@ export async function POST(request: Request) {
     // Convert paddles to generic products
     const products = paddlesToProducts(paddles);
 
+    // Map quiz responses to scoring config format
+    const mappedResponses = mapQuizResponsesToScoringFormat(responses);
+
     // Use generic recommendation engine
     const engine = new RecommendationEngine(paddleScoringConfig);
-    const recommendations = engine.recommend(products, responses, { limit: 5 });
+    const recommendations = engine.recommend(products, mappedResponses, { limit: 5 });
 
     // Convert back to paddle response format with affiliate URLs
     const paddleRecommendations = recommendations.map((product) => {
