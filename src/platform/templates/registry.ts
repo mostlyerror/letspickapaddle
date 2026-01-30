@@ -11,6 +11,7 @@
 import { QuizTemplate, TemplateRegistryEntry, TemplateCategory } from './types';
 import { paddleTemplate } from './paddle-template';
 import { kayakTemplate } from './kayak-template';
+import { laptopTemplate } from './laptop-template';
 
 /**
  * All available templates
@@ -18,9 +19,10 @@ import { kayakTemplate } from './kayak-template';
 const templates: QuizTemplate[] = [
   paddleTemplate,
   kayakTemplate,
+  laptopTemplate,
   // More templates will be added here:
-  // laptopTemplate,
   // runningShoesTemplate,
+  // mattressTemplate,
   // etc.
 ];
 

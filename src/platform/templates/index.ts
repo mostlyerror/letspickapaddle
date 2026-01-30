@@ -9,3 +9,4 @@ export * from './registry';
 export * from './instantiation-service';
 export * from './paddle-template';
 export * from './kayak-template';
+export * from './laptop-template';
