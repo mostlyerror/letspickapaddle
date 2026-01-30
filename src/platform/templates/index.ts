@@ -8,3 +8,4 @@ export * from './types';
 export * from './registry';
 export * from './instantiation-service';
 export * from './paddle-template';
+export * from './kayak-template';
