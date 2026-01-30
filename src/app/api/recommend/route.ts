@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { calculatePaddleScore } from '@/lib/recommendationEngine';
 import { buildPartnerAffiliateUrls } from '@/lib/affiliateUrls';
+import { RecommendationEngine } from '@/platform/core/engine/recommendation-engine';
+import { paddlesToProducts, productToPaddleResponse } from '@/platform/adapters/paddle-adapter';
+import { paddleScoringConfig } from '@/platform/adapters/paddle-scoring-config';
 
 export async function POST(request: Request) {
   try {
@@ -17,16 +19,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    // Fetch all quiz questions to get weight mappings
-    const questions = await prisma.quizQuestion.findMany({
-      where: { isActive: true },
-    });
-
-    const weightMappings: Record<string, any> = {};
-    questions.forEach((q) => {
-      weightMappings[q.questionKey] = JSON.parse(q.weightMappings);
-    });
 
     // Fetch partner to check for curated paddles and affiliate IDs
     let curatedPaddleIds: string[] | null = null;
@@ -67,48 +59,39 @@ export async function POST(request: Request) {
         : undefined,
     });
 
-    // Calculate scores for each paddle
-    const scoredPaddles = paddles.map((paddle) => {
-      const { score, matchReasons } = calculatePaddleScore(paddle, responses, weightMappings);
+    // Convert paddles to generic products
+    const products = paddlesToProducts(paddles);
 
+    // Use generic recommendation engine
+    const engine = new RecommendationEngine(paddleScoringConfig);
+    const recommendations = engine.recommend(products, responses, { limit: 5 });
+
+    // Convert back to paddle response format with affiliate URLs
+    const paddleRecommendations = recommendations.map((product) => {
       // Build affiliate URLs with partner's affiliate IDs
-      let affiliateUrls = paddle.affiliateUrls
-        ? JSON.parse(paddle.affiliateUrls)
-        : {};
+      let affiliateUrls = product.affiliateUrls;
 
       if (partnerAffiliateIds && Object.keys(affiliateUrls).length > 0) {
         // Substitute partner's affiliate IDs into the URLs
         affiliateUrls = buildPartnerAffiliateUrls(affiliateUrls, partnerAffiliateIds);
       }
 
+      // Convert to paddle response format
+      const paddleResponse = productToPaddleResponse(
+        product,
+        product.score,
+        product.matchReasons
+      );
+
       return {
-        id: paddle.id,
-        name: paddle.name,
-        brand: paddle.brand,
-        priceCents: paddle.priceCents,
-        powerRating: paddle.powerRating,
-        controlRating: paddle.controlRating,
-        spinRating: paddle.spinRating,
-        weightOz: paddle.weightOz,
-        coreMaterial: paddle.coreMaterial,
-        faceMaterial: paddle.faceMaterial,
-        shape: paddle.shape,
-        sweetSpotSize: paddle.sweetSpotSize,
-        imageUrl: paddle.imageUrl,
-        score,
-        matchReasons,
-        affiliateUrls,
+        ...paddleResponse,
+        affiliateUrls, // Override with partner-specific URLs
       };
     });
 
-    // Sort by score and get top 5
-    const recommendations = scoredPaddles
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 5);
-
     return NextResponse.json({
       success: true,
-      data: recommendations,
+      data: paddleRecommendations,
     });
   } catch (error) {
     console.error('Error generating recommendations:', error);
