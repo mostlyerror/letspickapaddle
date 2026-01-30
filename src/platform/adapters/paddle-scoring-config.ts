@@ -218,42 +218,8 @@ export const paddleScoringConfig: ScoringConfig = {
     // ==================================================================
     // SWEET SPOT SIZE RULES
     // ==================================================================
-
-    {
-      id: 'sweetspot_large',
-      type: 'exact_match',
-      responseKey: 'sweetSpotPreference',
-      productAttribute: 'sweetSpotSize',
-      logic: {
-        condition: { value: 'large', operator: '==' },
-        weight: 12,
-      },
-      reasoning: 'Large sweet spot for forgiving play',
-    },
-
-    {
-      id: 'sweetspot_medium',
-      type: 'exact_match',
-      responseKey: 'sweetSpotPreference',
-      productAttribute: 'sweetSpotSize',
-      logic: {
-        condition: { value: 'medium', operator: '==' },
-        weight: 12,
-      },
-      reasoning: 'Medium sweet spot balances control and forgiveness',
-    },
-
-    {
-      id: 'sweetspot_small',
-      type: 'exact_match',
-      responseKey: 'sweetSpotPreference',
-      productAttribute: 'sweetSpotSize',
-      logic: {
-        condition: { value: 'small', operator: '==' },
-        weight: 12,
-      },
-      reasoning: 'Smaller sweet spot for precise shots',
-    },
+    // Note: Sweet spot rules removed - not in current question set
+    // Can be re-added if sweet spot preference question is added
 
     // ==================================================================
     // BUDGET/PRICE RULES
@@ -304,28 +270,8 @@ export const paddleScoringConfig: ScoringConfig = {
     // ==================================================================
     // MATERIAL PREFERENCE RULES
     // ==================================================================
-
-    {
-      id: 'core_polymer',
-      type: 'contains',
-      responseKey: 'coreMaterialPreference',
-      productAttribute: 'coreMaterial',
-      logic: {
-        weight: 8,
-      },
-      reasoning: 'Preferred core material',
-    },
-
-    {
-      id: 'face_carbon',
-      type: 'contains',
-      responseKey: 'faceMaterialPreference',
-      productAttribute: 'faceMaterial',
-      logic: {
-        weight: 8,
-      },
-      reasoning: 'Preferred face material',
-    },
+    // Note: Material rules removed - not in current question set
+    // Can be re-added if material preference questions are added
 
     // ==================================================================
     // EXPERIENCE LEVEL ADJUSTMENTS
